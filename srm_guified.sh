@@ -27,20 +27,20 @@ check_deps(){
 }
 
 confirm_delete() {
-  local -i win_length=40
+  local -i win_length=45
   local -i exit_code
   case ${NUM_FILES} in
    0)
-     exit_with_error 2 "No Files to Delete, exiting"
+     exit_with_error 4 "No Files to Delete, exiting"
      ;;
    1)
     #Dynamicly expand for size of filename
     win_length=${win_length} + ${#ALL_FILES}
-    Xdialog --title "Secure Delete" --yesno "Really Secure Wipe ${ALL_FILES} File?" 8 ${win_length} 2> ${tmpfile}
+    Xdialog --icon edit-delete --title "Secure Delete" --yesno "Really Secure Wipe ${ALL_FILES} File?" 8 ${win_length} 2> ${tmpfile}
     exit_code=${?}
     ;;
    *)
-    Xdialog --title "Secure Delete" --yesno "Really Secure Wipe ${NUM_FILES} Files?" 8 ${win_length} 2> ${tmpfile}
+    Xdialog --icon edit-delete --title "Secure Delete" --yesno "Really Secure Wipe ${NUM_FILES} Files?" 8 ${win_length} 2> ${tmpfile}
     exit_code=${?}
     ;;
   esac
@@ -77,8 +77,14 @@ main() {
   declare CONFIRM="N"
   confirm_delete
   #do the wipe
-  srm -lr "${ALL_FILES}"
+  if [ ${CONFIRM} == "Y" ];then
+    srm -lr "${ALL_FILES}"
+    exit_code=${?}
+   else
+    exit_with_error 4 "User Canceled"
+  fi
   # Then notify the user the result
-  notify_complete ${?}
+  notify_complete ${exit_code}
+  exit ${exit_code}
 }
 main "${@}"
