@@ -5,6 +5,8 @@
 #
 #  licensed under the GPLv3 http://www.gnu.org/licenses/gpl-3.0.html
 
+SRM_OPTS="lr"
+
 DEP_LIST="srm Xdialog notify-send"
 
 exit_with_error(){
@@ -70,6 +72,14 @@ notify_complete() {
   esac
 }
 
+run_delete() {
+  local -i exit_code=0
+  notify-send --icon edit-delete "Secure Delete" "Securely Deleting File(s)"
+  srm -${SRM_OPTS} "${ALL_FILES}"
+  exit_code=${?}
+  return ${exit_code}
+}
+
 main() {
   local -i exit_code=0
   declare -i NUM_FILES=$#
@@ -78,7 +88,7 @@ main() {
   confirm_delete
   #do the wipe
   if [ ${CONFIRM} == "Y" ];then
-    srm -lr "${ALL_FILES}"
+    run_delete
     exit_code=${?}
    else
     exit_with_error 4 "User Canceled"
