@@ -5,9 +5,11 @@
 #
 #  licensed under the GPLv3 http://www.gnu.org/licenses/gpl-3.0.html
 
+# see man srm. default is two pass 0xFF then random
 SRM_OPTS="lr"
 
 DEP_LIST="srm Xdialog notify-send"
+CONFIRM="N"
 
 exit_with_error(){
   echo 1>&2 "srm_guified.sh: ERROR: ${2}"
@@ -23,7 +25,7 @@ check_deps(){
   for dep in ${DEP_LIST};do
     which ${dep} &> /dev/null
     if [ $? -ne 0 ];then
-      exit_with_error 4 "$dep is not in \$PATH! This is needed to run. Quitting"
+      exit_with_error 1 "$dep is not in \$PATH! This is needed to run. Quitting"
     fi
   done
 }
@@ -33,7 +35,7 @@ confirm_delete() {
   local -i exit_code
   case ${NUM_FILES} in
    0)
-     exit_with_error 4 "No Files to Delete, exiting"
+     exit_with_error 2 "No Files to Delete, exiting"
      ;;
    1)
     #Dynamicly expand for size of filename
@@ -84,14 +86,13 @@ main() {
   local -i exit_code=0
   declare -i NUM_FILES=$#
   declare ALL_FILES="${@}"
-  declare CONFIRM="N"
   confirm_delete
   #do the wipe
   if [ ${CONFIRM} == "Y" ];then
     run_delete
     exit_code=${?}
    else
-    exit_with_error 4 "User Canceled"
+    exit_with_error 2 "User Canceled"
   fi
   # Then notify the user the result
   notify_complete ${exit_code}
