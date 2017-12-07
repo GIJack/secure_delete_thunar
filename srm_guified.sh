@@ -97,13 +97,14 @@ run_delete() {
    *)
     counter=0
     (
-      for file in "${ALL_FILES}";do
+      for file in ${ALL_FILES};do
         echo ${counter}
         srm -${SRM_OPTS} "${file}"
         exit_code+=${?}
         [ $counter -ge 100 ] && continue
         counter+=${step}
       done
+      sleep 0.5
     ) |
     Xdialog --icon edit-delete --title "Secure Delete" --gauge "Securely deleting ${NUM_FILES} files" ${win_height} ${win_length}
     ;;
