@@ -39,13 +39,13 @@ confirm_delete() {
      exit_with_error 2 "No Files to Delete, exiting"
      ;;
    1)
-    #Dynamicly expand for size of filename
-    win_length=${win_length} + ${#ALL_FILES}
-    Xdialog --icon edit-delete --title "Secure Delete" --yesno "Really Secure Wipe ${ALL_FILES} File?" ${win_length} 2> ${tmpfile}
+    # Dynamicly expand for size of filename
+    win_length=$(( ${win_length} + ${#ALL_FILES} - 10 ))
+    Xdialog --icon edit-delete --title "Secure Delete" --yesno "Really Secure Delete ${ALL_FILES} File?" ${win_height} ${win_length}
     exit_code=${?}
     ;;
    *)
-    Xdialog --icon edit-delete --title "Secure Delete" --yesno "Really Secure Wipe ${NUM_FILES} Files?" ${win_height} ${win_length} 2> ${tmpfile}
+    Xdialog --icon edit-delete --title "Secure Delete" --yesno "Really Secure Delete ${NUM_FILES} Files?" ${win_height} ${win_length}
     exit_code=${?}
     ;;
   esac
@@ -75,23 +75,41 @@ notify_complete() {
 run_delete() {
   local -i win_length=45
   local -i win_height=8
-  local -i exit_code=0
-  notify-send --icon edit-delete "Secure Delete" "Securely Deleting File(s)"
-  #Xdialog --title "Secure Delete" --guage "Securely deleting" ${win_height} ${win_length} 0
+  local -i exit_code
+  local -i step=$(( 100/${NUM_FILES} ))
+  local -i counter
+  #notify-send --icon edit-delete "Secure Delete" "Securely Deleting File(s)"
   case ${NUM_FILES} in
    0)
     exit_with_error 4 "run_delete ran with 0 parameters, this should never happen (2)"
     ;;
    1)
-    #Xdialog --title "Secure Delete" --guage "Securely deleting" ${win_height} ${win_length} 0
+    win_length=$(( ${win_length} + ${#ALL_FILES} - 10 ))
+    (
+      echo 1
+      srm -${SRM_OPTS} "${ALL_FILES}"
+      exit_code=${?}
+      echo 100
+      sleep 0.5
+    ) |
+    Xdialog --icon edit-delete --title "Secure Delete" --gauge "Securely deleting ${ALL_FILES}" ${win_height} ${win_length}
     ;;
    *)
-    #Xdialog --title "Secure Delete" --guage "Securely deleting" ${win_height} ${win_length} 0
+    counter=0
+    (
+      for file in "${ALL_FILES}";do
+        echo ${counter}
+        srm -${SRM_OPTS} "${file}"
+        exit_code+=${?}
+        [ $counter -ge 100 ] && continue
+        counter+=${step}
+      done
+    ) |
+    Xdialog --icon edit-delete --title "Secure Delete" --gauge "Securely deleting ${NUM_FILES} files" ${win_height} ${win_length} 0
     ;;
   esac
-  srm -${SRM_OPTS} "${ALL_FILES}"
-
-  exit_code=${?}
+  #srm -${SRM_OPTS} "${ALL_FILES}"
+  #exit_code=${?}
   return ${exit_code}
 }
 
