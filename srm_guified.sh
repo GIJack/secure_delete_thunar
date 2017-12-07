@@ -105,7 +105,7 @@ run_delete() {
         counter+=${step}
       done
     ) |
-    Xdialog --icon edit-delete --title "Secure Delete" --gauge "Securely deleting ${NUM_FILES} files" ${win_height} ${win_length} 0
+    Xdialog --icon edit-delete --title "Secure Delete" --gauge "Securely deleting ${NUM_FILES} files" ${win_height} ${win_length}
     ;;
   esac
   #srm -${SRM_OPTS} "${ALL_FILES}"
