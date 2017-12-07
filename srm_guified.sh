@@ -32,7 +32,8 @@ check_deps(){
 
 confirm_delete() {
   local -i win_length=45
-  local -i exit_code
+  local -i win_height=8
+  local -i exit_code=0
   case ${NUM_FILES} in
    0)
      exit_with_error 2 "No Files to Delete, exiting"
@@ -40,11 +41,11 @@ confirm_delete() {
    1)
     #Dynamicly expand for size of filename
     win_length=${win_length} + ${#ALL_FILES}
-    Xdialog --icon edit-delete --title "Secure Delete" --yesno "Really Secure Wipe ${ALL_FILES} File?" 8 ${win_length} 2> ${tmpfile}
+    Xdialog --icon edit-delete --title "Secure Delete" --yesno "Really Secure Wipe ${ALL_FILES} File?" ${win_length} 2> ${tmpfile}
     exit_code=${?}
     ;;
    *)
-    Xdialog --icon edit-delete --title "Secure Delete" --yesno "Really Secure Wipe ${NUM_FILES} Files?" 8 ${win_length} 2> ${tmpfile}
+    Xdialog --icon edit-delete --title "Secure Delete" --yesno "Really Secure Wipe ${NUM_FILES} Files?" ${win_height} ${win_length} 2> ${tmpfile}
     exit_code=${?}
     ;;
   esac
@@ -75,9 +76,24 @@ notify_complete() {
 }
 
 run_delete() {
+  local -i win_length=45
+  local -i win_height=8
   local -i exit_code=0
   notify-send --icon edit-delete "Secure Delete" "Securely Deleting File(s)"
+  #Xdialog --title "Secure Delete" --guage "Securely deleting" ${win_height} ${win_length} 0
+  case ${NUM_FILES} in
+   0)
+    exit_with_error 2 "run_delete ran with 0 parameters, this should never happen (2)"
+    ;;
+   1)
+    #Xdialog --title "Secure Delete" --guage "Securely deleting" ${win_height} ${win_length} 0
+    ;;
+   *)
+    #Xdialog --title "Secure Delete" --guage "Securely deleting" ${win_height} ${win_length} 0
+    ;;
+  esac
   srm -${SRM_OPTS} "${ALL_FILES}"
+
   exit_code=${?}
   return ${exit_code}
 }
