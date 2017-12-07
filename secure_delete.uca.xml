@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actions>
+  <action>
+    <icon>edit-delete</icon>
+    <name>Secure Delete</name>
+    <name xml:lang="en">Secure Delete</name>
+    <name xml:lang="zh">安全删除</name>
+    <name xml:lang="es">eliminación segura</name>
+    <name xml:lang="jp">安全な削除</name>
+    <name xml:lang="pt">Eliminação segura</name>
+    <name xml:lang="de">Sicheres Löschen</name>
+    <name xml:lang="ar">تأمين حذف</name>
+    <name xml:lang="fr">Suppression sécurisée</name>
+    <name xml:lang="ru">Безопасное удаление</name>
+    <name xml:lang="ko">보안 삭제</name>
+    <unique-id>1451484670887515-4</unique-id>
+    <command>/usr/share/secure_delete_thunar/srm_guified.sh %F</command>
+    <description>Securely Wipe Files Before Deletion</description>
+    <description xml:lang="en">Securely Wipe Files Before Deletion</description>
+    <description xml:lang="zh">在删除之前安全地擦除文件</description>
+    <description xml:lang="es">Limpie de forma segura los archivos antes de la eliminación</description>
+    <description xml:lang="jp">削除前にファイルを安全に消去する</description>
+    <description xml:lang="de">Löschen Sie Dateien vor dem Löschen sicher</description>
+    <description xml:lang="ar">آمن مسح الملفات قبل الحذف</description>
+    <description xml:lang="fr">Nettoyer en toute sécurité les fichiers avant leur suppression</description>
+    <description xml:lang="ru">Безопасное удаление файлов перед удалением</description>
+    <description xml:lang="ko">삭제 전 파일을 안전하게 지우기</description>
+    <patterns>*</patterns>
+    <directories/>
+    <audio-files/>
+    <image-files/>
+    <other-files/>
+    <text-files/>
+    <video-files/>
+  </action>
+</actions>
