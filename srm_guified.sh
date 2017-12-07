@@ -21,7 +21,7 @@ message(){
 }
 
 check_deps(){
-  #This function checks dependencies. looks for executable binaries in path
+  # This function checks dependencies. looks for executable binaries in path
   for dep in ${DEP_LIST};do
     which ${dep} &> /dev/null
     if [ $? -ne 0 ];then
@@ -31,6 +31,8 @@ check_deps(){
 }
 
 confirm_delete() {
+  # Ask user confirmation before irrecovably wiping files. Probably most
+  # important, if not sole reason for this script.
   local -i win_length=45
   local -i win_height=8
   local -i exit_code=0
@@ -67,7 +69,7 @@ notify_complete() {
     notify-send --icon edit-delete "Secure-Delete" "Finished Securely Deleting File(s)"
     ;;
    *)
-    notify-send --icon edit-delete "Secure-Delete" "Security Wipe Failed ${exit_code}"
+    notify-send --icon edit-delete "Secure-Delete" "Security Wipe Failed (${exit_code})"
     ;;
   esac
 }
@@ -75,36 +77,45 @@ notify_complete() {
 run_delete() {
   local -i win_length=45
   local -i win_height=8
-  local -i exit_code
+  local -i exit_code=0
   local -i step=$(( 100/${NUM_FILES} ))
-  local -i counter
-  #notify-send --icon edit-delete "Secure Delete" "Securely Deleting File(s)"
+  local -i counter=0
+  local -i fin_wait=0.5 #time in seconds to wait after finnishing
+  # If there are no files, exit and error
   case ${NUM_FILES} in
    0)
-    exit_with_error 4 "run_delete ran with 0 parameters, this should never happen (2)"
+    exit_with_error 4 "run_delete ran with 0 parameters, this should never happen (4)"
     ;;
    1)
+    # Autoamticly adjust the window size for filename length so it doesn't look
+    # trashy
     win_length=$(( ${win_length} + ${#ALL_FILES} - 10 ))
+    # Yep, that is an anonymous function where numbers echoed change the Xdialog
+    # value. gawd I love shell. NAWT!
     (
+      # This switch is for one file, so we set Xdialog at %1 before, and %100
+      # after it finnishes running.
       echo 1
       srm -${SRM_OPTS} "${ALL_FILES}"
       exit_code=${?}
       echo 100
-      sleep 0.5
+      sleep ${fin_wait}
     ) |
     Xdialog --icon edit-delete --title "Secure Delete" --gauge "Securely deleting ${ALL_FILES}" ${win_height} ${win_length}
     ;;
    *)
-    counter=0
     (
+      # This counts percent of total files being proccessed. files are erased
+      # one at a time. Every line that writes a number to STDOUT runs the Xdialog
+      # line at the end, incrementing the counter.
       for file in ${ALL_FILES};do
         echo ${counter}
         srm -${SRM_OPTS} "${file}"
         exit_code+=${?}
-        [ $counter -ge 100 ] && continue
+        [ $counter -ge 100 ] && continue # percent stops at 100, silly
         counter+=${step}
       done
-      sleep 0.5
+      sleep ${fin_wait}
     ) |
     Xdialog --icon edit-delete --title "Secure Delete" --gauge "Securely deleting ${NUM_FILES} files" ${win_height} ${win_length}
     ;;
@@ -119,7 +130,7 @@ main() {
   declare -i NUM_FILES=$#
   declare ALL_FILES="${@}"
   confirm_delete
-  #do the wipe
+  # do the wipe
   if [ ${CONFIRM} == "Y" ];then
     run_delete
     exit_code=${?}
