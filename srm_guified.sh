@@ -53,11 +53,8 @@ confirm_delete() {
    0)
     CONFIRM="Y"
     ;;
-   1|255)
-    CONFIRM="N"
-    ;;
    *)
-    message "confirm popup: ${exit_code} invalid code. This message should never happen"
+    CONFIRM="N"
     ;;
   esac
 }
@@ -83,7 +80,7 @@ run_delete() {
   #Xdialog --title "Secure Delete" --guage "Securely deleting" ${win_height} ${win_length} 0
   case ${NUM_FILES} in
    0)
-    exit_with_error 2 "run_delete ran with 0 parameters, this should never happen (2)"
+    exit_with_error 4 "run_delete ran with 0 parameters, this should never happen (2)"
     ;;
    1)
     #Xdialog --title "Secure Delete" --guage "Securely deleting" ${win_height} ${win_length} 0
