@@ -63,13 +63,16 @@ confirm_delete() {
 
 notify_complete() {
   # libnotify end results
+  local -i win_length=45
+  local -i win_height=8
   local -i exit_code=${1}
   case ${exit_code} in
    0)
-    notify-send --icon shred "Secure-Delete" "Finished Securely Deleting File(s)"
+    notify-send --icon shred "Secure Delete" "Finished Securely Deleting File(s)"
     ;;
    *)
-    notify-send --icon shred "Secure-Delete" "Security Wipe Failed (${exit_code})"
+    notify-send --icon shred "Secure Delete" "Security Wipe Failed! (${exit_code})"
+    Xdialog --icon shred --title "Secure Delete" --msgbox "Security Wipe Failed! (${exit_code})" ${win_height} ${win_length}
     ;;
   esac
 }
@@ -101,7 +104,7 @@ run_delete() {
       echo 100
       sleep ${fin_wait}
     ) |
-    Xdialog --icon shred --title "Secure Delete" --gauge "Securely deleting ${ALL_FILES}" ${win_height} ${win_length}
+    Xdialog --icon shred --title "Secure Delete" --gauge "Wiping ${ALL_FILES}" ${win_height} ${win_length}
     ;;
    *)
     (
