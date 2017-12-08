@@ -43,11 +43,11 @@ confirm_delete() {
    1)
     # Dynamicly expand for size of filename
     win_length=$(( ${win_length} + ${#ALL_FILES} - 10 ))
-    Xdialog --icon edit-delete --title "Secure Delete" --yesno "Really Secure Delete ${ALL_FILES} File?" ${win_height} ${win_length}
+    Xdialog --icon shred --title "Secure Delete" --yesno "Really Wipe ${ALL_FILES} File?" ${win_height} ${win_length}
     exit_code=${?}
     ;;
    *)
-    Xdialog --icon edit-delete --title "Secure Delete" --yesno "Really Secure Delete ${NUM_FILES} Files?" ${win_height} ${win_length}
+    Xdialog --icon shred --title "Secure Delete" --yesno "Really Wipe ${NUM_FILES} Files?" ${win_height} ${win_length}
     exit_code=${?}
     ;;
   esac
@@ -66,10 +66,10 @@ notify_complete() {
   local -i exit_code=${1}
   case ${exit_code} in
    0)
-    notify-send --icon edit-delete "Secure-Delete" "Finished Securely Deleting File(s)"
+    notify-send --icon shred "Secure-Delete" "Finished Securely Deleting File(s)"
     ;;
    *)
-    notify-send --icon edit-delete "Secure-Delete" "Security Wipe Failed (${exit_code})"
+    notify-send --icon shred "Secure-Delete" "Security Wipe Failed (${exit_code})"
     ;;
   esac
 }
@@ -101,7 +101,7 @@ run_delete() {
       echo 100
       sleep ${fin_wait}
     ) |
-    Xdialog --icon edit-delete --title "Secure Delete" --gauge "Securely deleting ${ALL_FILES}" ${win_height} ${win_length}
+    Xdialog --icon shred --title "Secure Delete" --gauge "Securely deleting ${ALL_FILES}" ${win_height} ${win_length}
     ;;
    *)
     (
@@ -117,7 +117,7 @@ run_delete() {
       done
       sleep ${fin_wait}
     ) |
-    Xdialog --icon edit-delete --title "Secure Delete" --gauge "Securely deleting ${NUM_FILES} files" ${win_height} ${win_length}
+    Xdialog --icon shred --title "Secure Delete" --gauge "Securely deleting ${NUM_FILES} files" ${win_height} ${win_length}
     ;;
   esac
   #srm -${SRM_OPTS} "${ALL_FILES}"
