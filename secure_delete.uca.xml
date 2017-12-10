@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <actions>
   <action>
-    <icon>edit-delete</icon>
+    <icon>shred</icon>
     <name>Secure Delete</name>
     <name xml:lang="en">Secure Delete</name>
     <name xml:lang="zh">安全删除</name>
