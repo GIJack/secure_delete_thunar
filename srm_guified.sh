@@ -83,7 +83,7 @@ run_delete() {
   local -i exit_code=0
   local -i step=$(( 100/${NUM_FILES} ))
   local -i counter=0
-  local -i fin_wait=0.5 #time in seconds to wait after finnishing
+  local fin_wait=0.5 #time in seconds to wait after finnishing
   # If there are no files, exit and error
   case ${NUM_FILES} in
    0)
@@ -123,8 +123,6 @@ run_delete() {
     Xdialog --icon shred --title "Secure Delete" --gauge "Securely deleting ${NUM_FILES} files" ${win_height} ${win_length}
     ;;
   esac
-  #srm -${SRM_OPTS} "${ALL_FILES}"
-  #exit_code=${?}
   return ${exit_code}
 }
 
