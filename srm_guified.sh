@@ -12,6 +12,8 @@ DEP_LIST="srm Xdialog notify-send"
 CONFIRM="N"
 
 exit_with_error(){
+  local -i win_length=45
+  local -i win_height=8
   echo 1>&2 "srm_guified.sh: ERROR: ${2}"
   notify-send --icon shred "Secure Delete" "${2} (${exit_code})"
   Xdialog --icon shred --title "Secure Delete" --msgbox "${2} (${exit_code})" ${win_height} ${win_length}
