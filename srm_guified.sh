@@ -13,6 +13,8 @@ CONFIRM="N"
 
 exit_with_error(){
   echo 1>&2 "srm_guified.sh: ERROR: ${2}"
+  notify-send --icon shred "Secure Delete" "${2} (${exit_code})"
+  Xdialog --icon shred --title "Secure Delete" --msgbox "${2} (${exit_code})" ${win_height} ${win_length}
   exit ${1}
 }
 
@@ -40,14 +42,8 @@ confirm_delete() {
    0)
      exit_with_error 2 "No Files to Delete, exiting"
      ;;
-   1)
-    # Dynamicly expand for size of filename
-    win_length=$(( ${win_length} + ${#ALL_FILES} - 10 ))
-    Xdialog --icon shred --title "Secure Delete" --yesno "Really Wipe ${ALL_FILES} File?" ${win_height} ${win_length}
-    exit_code=${?}
-    ;;
    *)
-    Xdialog --icon shred --title "Secure Delete" --yesno "Really Wipe ${NUM_FILES} Files?" ${win_height} ${win_length}
+    Xdialog --icon shred --title "Secure Delete" --yesno "Really Wipe ${NUM_FILES} File(s)?" ${win_height} ${win_length}
     exit_code=${?}
     ;;
   esac
@@ -69,10 +65,10 @@ notify_complete() {
   case ${exit_code} in
    0)
     notify-send --icon shred "Secure Delete" "Finished Securely Deleting File(s)"
+    exit 0
     ;;
    *)
-    notify-send --icon shred "Secure Delete" "Security Wipe Failed! (${exit_code})"
-    Xdialog --icon shred --title "Secure Delete" --msgbox "Security Wipe Failed! (${exit_code})" ${win_height} ${win_length}
+    exit_with_error ${exit_code} "Secure Wipe Failed!"
     ;;
   esac
 }
@@ -90,9 +86,6 @@ run_delete() {
     exit_with_error 4 "run_delete ran with 0 parameters, this should never happen (4)"
     ;;
    1)
-    # Autoamticly adjust the window size for filename length so it doesn't look
-    # trashy
-    win_length=$(( ${win_length} + ${#ALL_FILES} - 10 ))
     # Yep, that is an anonymous function where numbers echoed change the Xdialog
     # value. gawd I love shell. NAWT!
     (
@@ -104,7 +97,7 @@ run_delete() {
       echo 100
       sleep ${fin_wait}
     ) |
-    Xdialog --icon shred --title "Secure Delete" --gauge "Wiping ${ALL_FILES}" ${win_height} ${win_length}
+    Xdialog --icon shred --title "Secure Delete" --gauge "Wiping 1 file" ${win_height} ${win_length}
     ;;
    *)
     (
@@ -140,6 +133,5 @@ main() {
   fi
   # Then notify the user the result
   notify_complete ${exit_code}
-  exit ${exit_code}
 }
 main "${@}"
