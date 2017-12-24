@@ -54,9 +54,9 @@ switch_checker() {
 main(){
   [ "$1" == "install" ] || help_and_exit
   install -Dm 644 shred.png ${PKG_ROOT}/${BASE_DIR}/icons/shred.png
-  install -Dm 755 srm_guified.sh ${PKG_ROOT}/${BASE_DIR}/thunar_srm/srm_guified.sh
-  install -Dm 755 LICENSE ${PKG_ROOT}/${BASE_DIR}/thunar_srm/LICENSE
-  install -Dm 644 secure_delete.uca.xml ${PKG_ROOT}/${BASE_DIR}/thunar_srm/secure_delete.uca.xml
+  install -Dm 755 srm_guified.sh ${PKG_ROOT}/${BASE_DIR}/share/thunar_srm/srm_guified.sh
+  install -Dm 755 LICENSE ${PKG_ROOT}/${BASE_DIR}/share/thunar_srm/LICENSE
+  install -Dm 644 secure_delete.uca.xml ${PKG_ROOT}/${BASE_DIR}/share/thunar_srm/secure_delete.uca.xml
   install -Dm 644 secure_delete.uca.xml ${PKG_ROOT}/etc/xdg/Thunar/secure_delete.uca.xml
 }
 
