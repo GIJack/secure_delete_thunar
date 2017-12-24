@@ -83,7 +83,6 @@ run_delete() {
   local -i counter=0
   local fin_wait=0.5 #time in seconds to wait after finnishing
   # If there are no files, exit and error
-  echo step $step
   case ${NUM_FILES} in
    0)
     exit_with_error 4 "run_delete ran with 0 parameters, this should never happen (4)"
