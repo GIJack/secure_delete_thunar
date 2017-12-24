@@ -6,7 +6,7 @@
 #  licensed under the GPLv3 http://www.gnu.org/licenses/gpl-3.0.html
 
 # see man srm. default is two pass 0xFF then random
-SRM_OPTS="lr"
+SRM_OPTS="flr"
 
 DEP_LIST="srm Xdialog notify-send"
 CONFIRM="N"
@@ -15,8 +15,8 @@ exit_with_error(){
   local -i win_length=45
   local -i win_height=8
   echo 1>&2 "srm_guified.sh: ERROR: ${2}"
-  notify-send --icon shred "Secure Delete" "${2} (${exit_code})"
-  Xdialog --icon shred --title "Secure Delete" --msgbox "${2} (${exit_code})" ${win_height} ${win_length}
+  notify-send --icon shred "Secure Delete" "${2} (${1})"
+  Xdialog --icon shred --title "Secure Delete" --msgbox "${2} (${1})" ${win_height} ${win_length}
   exit ${1}
 }
 
@@ -83,6 +83,7 @@ run_delete() {
   local -i counter=0
   local fin_wait=0.5 #time in seconds to wait after finnishing
   # If there are no files, exit and error
+  echo step $step
   case ${NUM_FILES} in
    0)
     exit_with_error 4 "run_delete ran with 0 parameters, this should never happen (4)"
@@ -100,6 +101,7 @@ run_delete() {
       sleep ${fin_wait}
     ) |
     Xdialog --icon shred --title "Secure Delete" --gauge "Wiping 1 file" ${win_height} ${win_length}
+    [ $? -eq 255 ] && exit_with_error 4 "Secure Wipe Canceled"
     ;;
    *)
     (
@@ -116,6 +118,7 @@ run_delete() {
       sleep ${fin_wait}
     ) |
     Xdialog --icon shred --title "Secure Delete" --gauge "Wiping ${NUM_FILES} files" ${win_height} ${win_length}
+    [ $? -eq 255 ] && exit_with_error 4 "Secure Wipe Canceled"
     ;;
   esac
   return ${exit_code}
@@ -131,7 +134,8 @@ main() {
     run_delete
     exit_code=${?}
    else
-    exit_with_error 2 "User Canceled"
+    echo "user canceled"
+    exit 2
   fi
   # Then notify the user the result
   notify_complete ${exit_code}
