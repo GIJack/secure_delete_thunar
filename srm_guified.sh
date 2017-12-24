@@ -29,7 +29,7 @@ check_deps(){
   for dep in ${DEP_LIST};do
     which ${dep} &> /dev/null
     if [ $? -ne 0 ];then
-      exit_with_error 1 "$dep is not in \$PATH! This is needed to run. Quitting"
+      exit_with_error 4 "$dep is not in \$PATH! This is needed to run. Quitting"
     fi
   done
 }
@@ -79,7 +79,7 @@ run_delete() {
   local -i win_length=45
   local -i win_height=8
   local -i exit_code=0
-  local -i step=$(( 100/${NUM_FILES} ))
+  local -i step=$(( 100000 / ${NUM_FILES} )) # Per 100,000. Convert later
   local -i counter=0
   local fin_wait=0.5 #time in seconds to wait after finnishing
   # If there are no files, exit and error
@@ -107,15 +107,15 @@ run_delete() {
       # one at a time. Every line that writes a number to STDOUT runs the Xdialog
       # line at the end, incrementing the counter.
       for file in ${ALL_FILES};do
-        echo ${counter}
+        echo $(( ${counter} / 1000 )) # convert back to percent
         srm -${SRM_OPTS} "${file}"
         exit_code+=${?}
-        [ $counter -ge 100 ] && continue # percent stops at 100, silly
+        [ $counter -ge 100000 ] && continue # percent stops at 100, silly
         counter+=${step}
       done
       sleep ${fin_wait}
     ) |
-    Xdialog --icon shred --title "Secure Delete" --gauge "Securely deleting ${NUM_FILES} files" ${win_height} ${win_length}
+    Xdialog --icon shred --title "Secure Delete" --gauge "Wiping ${NUM_FILES} files" ${win_height} ${win_length}
     ;;
   esac
   return ${exit_code}
