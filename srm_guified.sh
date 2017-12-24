@@ -6,13 +6,10 @@
 #  licensed under the GPLv3 http://www.gnu.org/licenses/gpl-3.0.html
 
 # see man srm. default is two pass 0xFF then random
-SRM_OPTS="flr"
+SRM_OPTS="lr"
 
 DEP_LIST="srm Xdialog notify-send"
 CONFIRM="N"
-
-# In case of multiple concurrent jobs, we 
-declare -i JOB_NO=$(( ))
 
 exit_with_error(){
   local -i win_length=45
