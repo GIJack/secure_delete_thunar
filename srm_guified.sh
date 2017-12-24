@@ -88,21 +88,6 @@ run_delete() {
    0)
     exit_with_error 4 "run_delete ran with 0 parameters, this should never happen (4)"
     ;;
-   1)
-    # Yep, that is an anonymous function where numbers echoed change the Xdialog
-    # value. gawd I love shell. NAWT!
-    (
-      # This switch is for one file, so we set Xdialog at %1 before, and %100
-      # after it finnishes running.
-      echo 1
-      srm -${SRM_OPTS} "${ALL_FILES}"
-      exit_code=${?}
-      echo 100
-      sleep ${fin_wait}
-    ) |
-    Xdialog --icon shred --title "Secure Delete" --gauge "Wiping 1 file" ${win_height} ${win_length}
-    [ $? -eq 255 ] && exit_with_error 4 "Secure Wipe Canceled"
-    ;;
    *)
     (
       # This counts percent of total files being proccessed. files are erased
