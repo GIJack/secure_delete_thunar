@@ -101,7 +101,7 @@ run_delete() {
       done
       sleep ${fin_wait}
     ) |
-    Xdialog --icon shred --title "Secure Delete" --gauge "Wiping ${NUM_FILES} files" ${win_height} ${win_length}
+    Xdialog --icon shred --title "Secure Delete" --gauge "Wiping ${NUM_FILES} file(s)" ${win_height} ${win_length}
     [ $? -eq 255 ] && exit_with_error 4 "Secure Wipe Canceled"
     ;;
   esac
