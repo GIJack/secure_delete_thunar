@@ -61,4 +61,4 @@ main(){
 }
 
 switch_checker "${@}"
-main "$PARAMS"
+main "$PARMS"
