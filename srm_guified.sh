@@ -11,6 +11,9 @@ SRM_OPTS="flr"
 DEP_LIST="srm Xdialog notify-send"
 CONFIRM="N"
 
+# In case of multiple concurrent jobs, we 
+declare -i JOB_NO=$(( ))
+
 exit_with_error(){
   local -i win_length=45
   local -i win_height=8
@@ -66,7 +69,7 @@ notify_complete() {
   local -i exit_code=${1}
   case ${exit_code} in
    0)
-    notify-send --icon shred "Secure Delete" "Finished Securely Deleting File(s)"
+    notify-send --icon shred "Secure Delete" "Finished Securely Deleting ${NUM_FILES} File(s)"
     exit 0
     ;;
    *)
