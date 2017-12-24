@@ -52,8 +52,6 @@ switch_checker() {
 }
 
 main(){
-  echo root: $PKG_ROOT base: $BASE_DIR
-  exit
   [ "$1" == "install" ] || help_and_exit
   install -Dm 644 shred.png ${PKG_ROOT}/${BASE_DIR}/icons/shred.png
   install -Dm 755 srm_guified.sh ${PKG_ROOT}/${BASE_DIR}/thunar_srm/srm_guified.sh
