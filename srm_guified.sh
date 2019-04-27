@@ -13,21 +13,23 @@
 SRM_PROG="srm"
 SRM_OPTS="lr"
 
+
 DEP_LIST="srm Xdialog notify-send"
 CONFIRM="N"
+ICON="shred"
 
 exit_with_error(){
   local -i win_length=45
   local -i win_height=8
   echo 1>&2 "srm_guified.sh: ERROR: ${2}"
   notify-send --icon shred "Secure Delete" "${2} (${1})"
-  Xdialog --icon shred --title "Secure Delete" --msgbox "${2} (${1})" ${win_height} ${win_length}
+  Xdialog --icon ${ICON} --title "Secure Delete" --msgbox "${2} (${1})" ${win_height} ${win_length}
   exit ${1}
 }
 
 exit_with_error_soft(){
   echo 1>&2 "srm_guified.sh: ERROR: ${2}"
-  notify-send --icon shred "Secure Delete" "${2} (${1})"
+  notify-send --icon ${ICON} "Secure Delete" "${2} (${1})"
   exit ${1}
 }
 
@@ -56,7 +58,7 @@ confirm_delete() {
      exit_with_error 2 "No Files to Delete, exiting"
      ;;
    *)
-    Xdialog --icon shred --title "Secure Delete" --yesno "Really Wipe ${NUM_FILES} File(s)?" ${win_height} ${win_length}
+    Xdialog --icon ${ICON} --title "Secure Delete" --yesno "Really Wipe ${NUM_FILES} File(s)?" ${win_height} ${win_length}
     exit_code=${?}
     ;;
   esac
@@ -77,7 +79,7 @@ notify_complete() {
   local -i exit_code=${1}
   case ${exit_code} in
    0)
-    notify-send --icon shred "Secure Delete" "Finished Securely Deleting ${NUM_FILES} File(s)"
+    notify-send --icon s${ICON} "Secure Delete" "Finished Securely Deleting ${NUM_FILES} File(s)"
     exit 0
     ;;
    *)
@@ -112,7 +114,7 @@ run_delete() {
       done
       sleep ${fin_wait}
     ) |
-    Xdialog --icon shred --title "Secure Delete" --gauge "Wiping ${NUM_FILES} file(s)" ${win_height} ${win_length}
+    Xdialog --icon ${ICON} --title "Secure Delete" --gauge "Wiping ${NUM_FILES} file(s)" ${win_height} ${win_length}
     [ $? -eq 255 ] && exit_with_error 4 "Secure Wipe Aborted"
     ;;
   esac
