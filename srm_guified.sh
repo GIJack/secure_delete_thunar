@@ -105,7 +105,7 @@ run_delete() {
       # This counts percent of total files being proccessed. files are erased
       # one at a time. Every line that writes a number to STDOUT runs the Xdialog
       # line at the end, incrementing the counter.
-      for file in ${ALL_FILES};do
+      for file in "${ALL_FILES[@]}";do
         echo $(( ${counter} / 1000 )) # convert back to percent
         ${SRM_PROG} -${SRM_OPTS} "${file}"
         exit_code+=${?}
@@ -124,7 +124,7 @@ run_delete() {
 main() {
   local -i exit_code=0
   declare -i NUM_FILES=$#
-  declare ALL_FILES="${@}"
+  declare ALL_FILES=("${@}")
   confirm_delete
   # do the wipe
   if [ ${CONFIRM} == "Y" ];then
