@@ -22,7 +22,7 @@ exit_with_error(){
   local -i win_length=45
   local -i win_height=8
   echo 1>&2 "srm_guified.sh: ERROR: ${2}"
-  notify-send --icon shred "Secure Delete" "${2} (${1})"
+  notify-send --icon ${ICON} "Secure Delete" "${2} (${1})"
   Xdialog --icon ${ICON} --title "Secure Delete" --msgbox "${2} (${1})" ${win_height} ${win_length}
   exit ${1}
 }
@@ -79,7 +79,7 @@ notify_complete() {
   local -i exit_code=${1}
   case ${exit_code} in
    0)
-    notify-send --icon s${ICON} "Secure Delete" "Finished Securely Deleting ${NUM_FILES} File(s)"
+    notify-send --icon ${ICON} "Secure Delete" "Finished Securely Deleting ${NUM_FILES} File(s)"
     exit 0
     ;;
    *)
