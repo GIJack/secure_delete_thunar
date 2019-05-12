@@ -10,9 +10,14 @@
 
 # the default is to use srm from THC's secure-delete, using two passes random,
 # with sync and /dev/urandom.
-SRM_PROG="srm"
-SRM_OPTS="lr"
 
+## THC(Van Hausen)'s Secure Delete
+SRM_PROG="srm"
+SRM_OPTS="-lr"
+
+## GNU Shred from coreutils
+#SRM_PROG=shred
+#SRM_OPTS="--remove=wipesync -f -n2"
 
 DEP_LIST="srm Xdialog notify-send"
 CONFIRM="N"
@@ -107,7 +112,7 @@ run_delete() {
       # line at the end, incrementing the counter.
       for file in "${ALL_FILES[@]}";do
         echo $(( ${counter} / 1000 )) # convert back to percent
-        ${SRM_PROG} -${SRM_OPTS} "${file}"
+        ${SRM_PROG} ${SRM_OPTS} "${file}"
         exit_code+=${?}
         [ $counter -ge 100000 ] && continue # percent stops at 100, silly
         counter+=${step}
