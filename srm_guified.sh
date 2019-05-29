@@ -94,6 +94,7 @@ notify_complete() {
     ;;
    *)
     exit_with_error ${exit_code} "Secure Wipe Failed!"
+    exit ${exit_code}
     ;;
   esac
 }
