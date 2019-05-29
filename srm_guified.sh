@@ -38,6 +38,11 @@ exit_with_error_soft(){
   exit ${1}
 }
 
+warn_notify(){
+  echo 1>&2 "srm_guified.sh: Warn: ${@}"
+  notify-send --icon ${ICON} "Secure Delete" "${@}"
+}
+
 message(){
   echo "srm_guified.sh: ${@}"
 }
@@ -97,6 +102,7 @@ run_delete() {
   local -i win_length=45
   local -i win_height=8
   local -i exit_code=0
+  local -i i_exit=0
   local -i step=$(( 100000 / ${NUM_FILES} )) # Per 100,000. Convert later
   local -i counter=0
   local fin_wait=0.5 #time in seconds to wait after finnishing
@@ -113,7 +119,9 @@ run_delete() {
       for file in "${ALL_FILES[@]}";do
         echo $(( ${counter} / 1000 )) # convert back to percent
         ${SRM_PROG} ${SRM_OPTS} "${file}"
-        exit_code+=${?}
+        i_exit=${?}
+        [ ${i_exit} -ne 0 ] && warn_notify "Could not delete ${file}!"
+        exit_code+=${i_exit}
         [ $counter -ge 100000 ] && continue # percent stops at 100, silly
         counter+=${step}
       done
