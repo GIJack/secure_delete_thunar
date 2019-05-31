@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # Takes file names on the command line, gives and Xdialog confirm and status
 # window to make more friendly to the GUI user.
