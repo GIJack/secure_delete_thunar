@@ -11,18 +11,16 @@
 # with sync and /dev/urandom.
 
 ## THC(Van Hausen)'s Secure Delete
-SRM_PROG="srm"
-SRM_OPTS="-lr"
+#SRM_PROG="srm"
+#SRM_OPTS="-lr"
 
 ## GNU Shred from coreutils
-#SRM_PROG=shred
-#SRM_OPTS="--remove=wipesync -f -n2"
+SRM_PROG=shred
+SRM_OPTS="--remove=wipesync -f -n2"
 
-DEP_LIST="srm Xdialog notify-send"
+DEP_LIST="find shred Xdialog notify-send"
 CONFIRM="N"
 ICON="shred"
-
-declare -i FILE_FAILS=0
 
 exit_with_error(){
   local -i win_length=45
@@ -100,7 +98,7 @@ notify_complete() {
   esac
 }
 
-run_delete() {
+delete_files() {
   local -i win_length=45
   local -i win_height=8
   local -i exit_code=0
@@ -110,21 +108,22 @@ run_delete() {
   # If there are no files, exit and error
   case ${NUM_FILES} in
    0)
-    exit_with_error 4 "run_delete ran with 0 parameters, this should never happen (4)"
+    exit_with_error 4 "delete_files() ran with 0 parameters, this should never happen (4)"
     ;;
    *)
     (
       # This counts percent of total files being proccessed. files are erased
       # one at a time. Every line that writes a number to STDOUT runs the Xdialog
       # line at the end, incrementing the counter.
-      for file in "${ALL_FILES[@]}";do
+      for file in "${SHRED_FILES[@]}";do
         echo $(( ${counter} / 1000 )) # convert back to percent
+        file=${file%%[[:space:]]}
         ${SRM_PROG} ${SRM_OPTS} "${file}"
         if [ ${?} -ne 0 ];then
           warn_notify "Could Not Delete ${file}!"
           FILE_FAILS+=1  
         fi
-        [ $counter -ge 100000 ] && continue # percent stops at 100, silly
+        [ $counter -ge 100000 ] && continue # percent stops at 100
         counter+=${step}
       done
       sleep ${fin_wait}
@@ -136,13 +135,39 @@ run_delete() {
   return ${exit_code}
 }
 
+delete_dirs(){
+  #remove empty directories after all the files have been wiped
+  local cmd_line=""
+  for dir in "${SHRED_DIRS[@]}";do
+    dir=${dir%%[[:space:]]}
+    cmd_line+="${dir} "
+    rmdir -p "${dir}"
+  done
+}
+
 main() {
-  declare -i NUM_FILES=$#
-  declare ALL_FILES=("${@}")
+  declare IN_FILES=("${@}")
+  declare -a SHRED_FILES
+  declare -a SHRED_DIRS
+  declare -i NUM_FILES=0
+  declare -i FILE_FAILS=0
+  declare -i DIR_FAILS=0
+
+  local -a file_array
+  for file in "${IN_FILES[@]}";do
+    readarray file_array <<< $(find "${file}" -type f )
+    SHRED_FILES+=("${file_array[@]}")
+    readarray file_array <<< $(find "${file}" -type d )
+    SHRED_DIRS+=("${file_array[@]}")
+  done
+  NUM_FILES=${#SHRED_FILES[@]}
+  [ -z ${IN_FILES} ] && exit_with_error 4 "Nothing Specified, nothing to do!"
+
   confirm_delete
   # do the wipe
   if [ ${CONFIRM} == "Y" ];then
-    run_delete
+    delete_files
+    delete_dirs
    else
     exit_with_error_soft 4 "User Canceled"
   fi
