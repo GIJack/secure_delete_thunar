@@ -7,7 +7,7 @@
 
 # Exit codes 0-success 1-srm_failure 2-script_failure 4-user_failure
 
-# the default is to use srm from THC's secure-delete, using two passes random,
+# the default is to use GNU shred from coreutils, using two passes random,
 # with sync and /dev/urandom.
 
 ## THC(Van Hausen)'s Secure Delete
